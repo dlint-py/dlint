@@ -141,9 +141,9 @@ OVERLAPPING_ALTERNATIONS = [
     (r"[^b]|[a-c]", True),  # not literal partial and range
     (r"[^d]|[^b]|[a-c]", True),  # multiple not literal and range
     (r"[^abcAB]|[a-c]|[A-C]", True),  # negate literal and multiple range
-    (r"\\d|1", True),  # digit category and digit
-    (r"\\w|a", True),  # word category and letter
-    (r"\\s| ", True),  # whitespace category and space
+    (r"\\d|123", True),  # digit category and multiple digit
+    (r"\\w|abc", True),  # word category and multiple letter
+    (r"\\s|   ", True),  # whitespace category and multiple space
     (r"[^\\W]|[a-c]", True),  # negate not word and range
     (r"d|[a-c]", False),  # literal and range
     (r"[^a]|a", False),  # not literal and literal
@@ -204,6 +204,9 @@ OVERLAPPING_ALTERNATIONS_PY_3_7 = [
     (r"[a-c]|[c-e]", True),  # range and range
     (r"\\w|[a-c]", True),  # word and range
     (r"\\S|[a-c]", True),  # not whitespace and range
+    (r"\\d|1", True),  # digit category and digit
+    (r"\\w|a", True),  # word category and letter
+    (r"\\s| ", True),  # whitespace category and space
 ]
 
 
