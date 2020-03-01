@@ -7,748 +7,262 @@ from __future__ import (
     unicode_literals,
 )
 
-import itertools
 import sys
 import unittest
+
+import pytest
 
 import dlint
 
 IS_PYTHON_3_7 = sys.version_info >= (3, 7)
 
+ILLEGAL_MODULE_ATTRIBUTES = [
+    (module_path, attribute)
+    for module_path, attributes in dlint.linters.BadReCatastrophicUseLinter().illegal_module_attributes.items()
+    for attribute in attributes
+]
 
-class TestBadReCatastrophicUse(dlint.test.base.BaseTest):
 
-    def test_bad_re_catastrophic_usage(self):
-        python_node = self.get_ast_node(
-            """
-            import re
+@pytest.mark.parametrize("module_path, attribute", ILLEGAL_MODULE_ATTRIBUTES)
+def test_bad_re_catastrophic_usage(module_path, attribute):
+    python_node = dlint.test.base.get_ast_node(
+        """
+        import {MODULE_PATH}
 
-            re.compile('(a+)+b')
-            re.search('(a+)+b')
-            re.match('(a+)+b')
-            re.fullmatch('(a+)+b')
-            re.split('(a+)+b')
-            re.findall('(a+)+b')
-            re.finditer('(a+)+b')
-            re.sub('(a+)+b')
-            re.subn('(a+)+b')
-            """
+        {MODULE_PATH}.{ATTRIBUTE}('(a+)+z')
+        """.format(MODULE_PATH=module_path, ATTRIBUTE=attribute)
+    )
+
+    linter = dlint.linters.BadReCatastrophicUseLinter()
+    linter.visit(python_node)
+
+    result = linter.get_results()
+    expected = [
+        dlint.linters.base.Flake8Result(
+            lineno=4,
+            col_offset=0,
+            message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
+        ),
+    ]
+
+    assert result == expected
+
+
+@pytest.mark.parametrize("module_path, attribute", ILLEGAL_MODULE_ATTRIBUTES)
+def test_bad_re_catastrophic_usage_from_import(module_path, attribute):
+    python_node = dlint.test.base.get_ast_node(
+        """
+        from {MODULE_PATH} import {ATTRIBUTE}
+
+        {ATTRIBUTE}('(a+)+z')
+        """.format(MODULE_PATH=module_path, ATTRIBUTE=attribute)
+    )
+
+    linter = dlint.linters.BadReCatastrophicUseLinter()
+    linter.visit(python_node)
+
+    result = linter.get_results()
+    expected = [
+        dlint.linters.base.Flake8Result(
+            lineno=4,
+            col_offset=0,
+            message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
+        ),
+    ]
+
+    assert result == expected
+
+
+LARGE_QUANTIFIERS = [
+    "+", "+?",
+    "*", "*?",
+    "{1,10}", "{1,10}?",
+    "{10}", "{10}?",
+    "{,10}", "{,10}?",
+    "{10,}", "{10,}?",
+]
+SMALL_QUANTIFIERS = [
+    "?", "??",
+    "{1,9}", "{1,9}?",
+    "{9}", "{9}?",
+    "{,9}", "{,9}?",
+]
+
+
+@pytest.mark.parametrize("quantifier1", LARGE_QUANTIFIERS)
+@pytest.mark.parametrize("quantifier2", LARGE_QUANTIFIERS)
+def test_bad_re_nested_large_quantifiers(quantifier1, quantifier2):
+    python_node = dlint.test.base.get_ast_node(
+        """
+        import re
+
+        re.search('(a{QUANTIFIER1}){QUANTIFIER2}z')
+        """.format(QUANTIFIER1=quantifier1, QUANTIFIER2=quantifier2)
+    )
+
+    linter = dlint.linters.BadReCatastrophicUseLinter()
+    linter.visit(python_node)
+
+    result = linter.get_results()
+    expected = [
+        dlint.linters.base.Flake8Result(
+            lineno=4,
+            col_offset=0,
+            message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
+        ),
+    ]
+
+    assert result == expected
+
+
+@pytest.mark.parametrize("quantifier1", LARGE_QUANTIFIERS)
+@pytest.mark.parametrize("quantifier2", SMALL_QUANTIFIERS)
+def test_bad_re_nested_small_quantifiers(quantifier1, quantifier2):
+    python_node = dlint.test.base.get_ast_node(
+        """
+        import re
+
+        re.search('(a{QUANTIFIER1}){QUANTIFIER2}z')
+        """.format(QUANTIFIER1=quantifier1, QUANTIFIER2=quantifier2)
+    )
+
+    linter = dlint.linters.BadReCatastrophicUseLinter()
+    linter.visit(python_node)
+
+    result = linter.get_results()
+    expected = []
+
+    assert result == expected
+
+
+OVERLAPPING_ALTERNATIONS = [
+    (r".|[a-c]", True),  # anything and range
+    (r"[^d]|[a-c]", True),  # not literal and range
+    (r"[^b]|[a-c]", True),  # not literal partial and range
+    (r"[^d]|[^b]|[a-c]", True),  # multiple not literal and range
+    (r"[^abcAB]|[a-c]|[A-C]", True),  # negate literal and multiple range
+    (r"\\d|1", True),  # digit category and digit
+    (r"\\w|a", True),  # word category and letter
+    (r"\\s| ", True),  # whitespace category and space
+    (r"[^\\W]|[a-c]", True),  # negate not word and range
+    (r"d|[a-c]", False),  # literal and range
+    (r"[^a]|a", False),  # not literal and literal
+    (r"[^abcABC]|[a-c]|[A-C]", False),  # negate literal and multiple range
+    (r"[a-c]|[d-f]", False),  # range and range
+    (r"[abc]|[d-f]", False),  # literals and range
+    (r"[a-c]|[^a-c]", False),  # range and negate range
+]
+
+
+@pytest.mark.parametrize("alternation, overlapping", OVERLAPPING_ALTERNATIONS)
+def test_bad_re_catastrophic_nested_quantifier_alternation(alternation, overlapping):
+    python_node = dlint.test.base.get_ast_node(
+        """
+        import re
+
+        re.search('({ALTERNATION})+z')
+        """.format(ALTERNATION=alternation)
+    )
+
+    linter = dlint.linters.BadReCatastrophicUseLinter()
+    linter.visit(python_node)
+
+    result = linter.get_results()
+    expected = [] if not overlapping else [
+        dlint.linters.base.Flake8Result(
+            lineno=4,
+            col_offset=0,
+            message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
         )
+    ]
 
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
+    assert result == expected
 
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=5,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=6,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=7,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=8,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=9,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=10,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=11,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=12,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-        ]
 
-        assert result == expected
+@pytest.mark.parametrize("quantifier", SMALL_QUANTIFIERS)
+def test_bad_re_catastrophic_nested_small_quantifier_alternation(quantifier):
+    python_node = dlint.test.base.get_ast_node(
+        """
+        import re
 
-    def test_bad_re_catastrophic_usage_from_import(self):
-        python_node = self.get_ast_node(
-            """
-            from re import compile, search, match, fullmatch, split, findall, finditer, sub, subn
+        re.search('(a|a){QUANTIFIER}z')
+        """.format(QUANTIFIER=quantifier)
+    )
 
-            compile('(a+)+b')
-            search('(a+)+b')
-            match('(a+)+b')
-            fullmatch('(a+)+b')
-            split('(a+)+b')
-            findall('(a+)+b')
-            finditer('(a+)+b')
-            sub('(a+)+b')
-            subn('(a+)+b')
-            """
+    linter = dlint.linters.BadReCatastrophicUseLinter()
+    linter.visit(python_node)
+
+    result = linter.get_results()
+    expected = []
+
+    assert result == expected
+
+
+# sre_parse optimization nullifies this alternation check in Python 3.7+
+OVERLAPPING_ALTERNATIONS_PY_3_7 = [
+    (r"a|[a-c]", True),  # literal and range
+    (r"[a-c]|[c-e]", True),  # range and range
+    (r"\\w|[a-c]", True),  # word and range
+    (r"\\S|[a-c]", True),  # not whitespace and range
+]
+
+
+@pytest.mark.parametrize("alternation, overlapping", OVERLAPPING_ALTERNATIONS_PY_3_7)
+def test_bad_re_catastrophic_nested_quantifier_alternation_py_3_7(alternation, overlapping):
+    python_node = dlint.test.base.get_ast_node(
+        """
+        import re
+
+        re.search('({ALTERNATION})+z')
+        """.format(ALTERNATION=alternation)
+    )
+
+    linter = dlint.linters.BadReCatastrophicUseLinter()
+    linter.visit(python_node)
+
+    result = linter.get_results()
+
+    expected = [] if IS_PYTHON_3_7 or not overlapping else [
+        dlint.linters.base.Flake8Result(
+            lineno=4,
+            col_offset=0,
+            message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
         )
+    ]
 
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
+    assert result == expected
 
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=5,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=6,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=7,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=8,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=9,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=10,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=11,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=12,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-        ]
 
-        assert result == expected
+OK_RE_CALLS = [
+    r"re.search('[abc]+[def]*')",  # adjacent quantifier ok
+    r"re.search('[abc]+([def]*)')",  # diagonal quantifier ok
+    r"re.search('(?P<name>[foo])(?(name)yes|no)')",  # groupref ok
+    r"re.search(s)",  # variable argument ok, or at least don't explode
+    r"re.search()",  # missing argument ok, or at least don't explode
+    r"re.search('(foo')",  # malformed expression ok, or at least don't explode
+    r"re.purge()",  # legal attribute ok
+]
 
-    def test_bad_re_catastrophic_usage_django(self):
-        python_node = self.get_ast_node(
-            """
-            import django
 
-            django.core.validators.RegexValidator('(a+)+b')
-            django.urls.re_path('(a+)+b')
-            """
-        )
+@pytest.mark.parametrize("re_call", OK_RE_CALLS)
+def test_bad_re_catastrophic_not_literal_string(re_call):
+    python_node = dlint.test.base.get_ast_node(
+        """
+        import re
 
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
+        s = 'test'
 
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=5,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-        ]
+        {RE_CALL}
+        """.format(RE_CALL=re_call)
+    )
 
-        assert result == expected
+    linter = dlint.linters.BadReCatastrophicUseLinter()
+    linter.visit(python_node)
 
-    def test_bad_re_catastrophic_usage_from_import_django(self):
-        python_node = self.get_ast_node(
-            """
-            from django.core.validators import RegexValidator
-            from django.urls import re_path
+    result = linter.get_results()
+    expected = []
 
-            RegexValidator('(a+)+b')
-            re_path('(a+)+b')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=5,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=6,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            ),
-        ]
-
-        assert result == expected
-
-    def get_individual_result(self, python_code):
-        python_node = self.get_ast_node(python_code)
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-        results = linter.get_results()
-
-        if len(results) > 1:
-            raise Exception("too many results found - len={}".format(len(results)))
-
-        return results[0]
-
-    def test_bad_re_nested_quantifiers(self):
-        qualifiers = [
-            "+",
-            "+?",
-            "*",
-            "*?",
-            "{1,10}",
-            "{1,10}?",
-            "{10}",
-            "{10}?",
-            "{,10}",
-            "{,10}?",
-            "{10,}",
-            "{10,}?",
-        ]
-        fmt = (
-            """
-            import re
-            re.search('(a{}){}b')
-            """
-        )
-        cases = [
-            fmt.format(*case)
-            for case in itertools.permutations(qualifiers, 2)
-        ]
-        result = [self.get_individual_result(case) for case in cases]
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=3,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ] * len(cases)
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_adjacent_quantifier_ok(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('[abc]+[def]*')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_diagonal_quantifier_ok(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('[abc]+([def]*)')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_any_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('(.|[a-c])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_literal_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('(a|[a-c])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-
-        # sre_parse optimization nullifies this alternation check in Python 3.7+
-        expected = [] if IS_PYTHON_3_7 else [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_literal_no_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('(d|[a-c])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_not_literal_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('([^d]|[a-c])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_not_literal_incomplete_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('([^b]|[a-c])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_not_literal_no_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('([^a]|a)+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_multiple_not_literal_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('([^d]|[^b]|[a-c])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_multiple_negate_literal_no_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('([^abcABC]|[a-c]|[A-C])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_multiple_negate_literal_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('([^abcAB]|[a-c]|[A-C])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_range_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('([a-c]|[c-e])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-
-        # sre_parse optimization nullifies this alternation check in Python 3.7+
-        expected = [] if IS_PYTHON_3_7 else [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_range_no_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('([a-c]|[d-e])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_range_literals_no_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('([a-c]|[def])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_ranges_no_overlap(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('([a-c]|[^a-c])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_category_overlap(self):
-        python_node = self.get_ast_node(
-            r"""
-            import re
-
-            re.search('(\\w|[a-c])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-
-        # sre_parse optimization nullifies this alternation check in Python 3.7+
-        expected = [] if IS_PYTHON_3_7 else [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_not_category_overlap(self):
-        python_node = self.get_ast_node(
-            r"""
-            import re
-
-            re.search('(\\S|[a-c])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-
-        # sre_parse optimization nullifies this alternation check in Python 3.7+
-        expected = [] if IS_PYTHON_3_7 else [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_digit_category_overlap(self):
-        python_node = self.get_ast_node(
-            r"""
-            import re
-
-            re.search('(\\d|123)+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_negate_category_overlap(self):
-        python_node = self.get_ast_node(
-            r"""
-            import re
-
-            re.search('([^\\W]|[a-c])+')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=0,
-                message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
-            )
-        ]
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_nested_quantifier_alternation_small_repeat(self):
-        python_node = self.get_ast_node(
-            r"""
-            import re
-
-            re.search('(a|a)?b')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_groupref_detection(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('(?P<name>[foo])(?(name)yes|no)')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_not_literal_string(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            s = 'test'
-            re.search(s)
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_missing_argument(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search()
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
-
-    def test_bad_re_catastrophic_malformed_expression(self):
-        python_node = self.get_ast_node(
-            """
-            import re
-
-            re.search('(foo')
-            """
-        )
-
-        linter = dlint.linters.BadReCatastrophicUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
-
-        assert result == expected
+    assert result == expected
 
 
 if __name__ == "__main__":
