@@ -209,6 +209,9 @@ class CharacterRange(object):
 
 
 def large_repeat(node):
+    if node.op not in sre_parse._REPEATCODES:
+        return False
+
     repeat_min, repeat_max = node.args
 
     # Repetition sizes that cause catastrophic backtracking depend on many
@@ -232,10 +235,7 @@ def max_nested_quantifiers(node):
         max_nested_quantifiers(child)
         for child in node.children
     )
-    is_large_repeat = int(
-        node.op in sre_parse._REPEATCODES
-        and large_repeat(node)
-    )
+    is_large_repeat = int(large_repeat(node))
 
     return is_large_repeat + child_max
 
@@ -255,10 +255,7 @@ def mutually_inclusive_alternation_helper(node, nested_quantifier):
     if not node.children:
         return False
 
-    nested_quantifier = (
-        nested_quantifier
-        or (node.op in sre_parse._REPEATCODES and large_repeat(node))
-    )
+    nested_quantifier = nested_quantifier or large_repeat(node)
 
     inclusive_alternation = False
     if node.op is sre_constants.BRANCH:
