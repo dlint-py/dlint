@@ -66,7 +66,7 @@ class OpNode(object):
         )
 
 
-def build_op_tree_helper(node, subpattern, parent_backtrackable):
+def _build_op_tree_helper(node, subpattern, parent_backtrackable):
     prev_sibling_backtrackable = False
 
     # Iterating in reverse helps with determining backtrackability. A
@@ -100,7 +100,7 @@ def build_op_tree_helper(node, subpattern, parent_backtrackable):
         )
         new_node = OpNode(op, tuple(args), current_backtrackable)
         for sp in reversed(subpatterns):
-            build_op_tree_helper(new_node, sp, current_backtrackable)
+            _build_op_tree_helper(new_node, sp, current_backtrackable)
 
         prev_sibling_backtrackable = (
             prev_sibling_backtrackable
@@ -110,7 +110,7 @@ def build_op_tree_helper(node, subpattern, parent_backtrackable):
 
 
 def build_op_tree(node, subpattern):
-    build_op_tree_helper(node, subpattern, False)
+    _build_op_tree_helper(node, subpattern, False)
 
 
 class CharacterRange(object):
@@ -284,7 +284,7 @@ def inclusive_alternation_branch(branch_node):
     )
 
 
-def mutually_inclusive_alternation_helper(node, nested_quantifier):
+def _mutually_inclusive_alternation_helper(node, nested_quantifier):
     if not node.children:
         return False
 
@@ -296,13 +296,13 @@ def mutually_inclusive_alternation_helper(node, nested_quantifier):
 
     return any(
         (nested_quantifier and inclusive_alternation and node.backtrackable)
-        or mutually_inclusive_alternation_helper(child, nested_quantifier)
+        or _mutually_inclusive_alternation_helper(child, nested_quantifier)
         for child in node.children
     )
 
 
 def mutually_inclusive_alternation(node):
-    return mutually_inclusive_alternation_helper(node, False)
+    return _mutually_inclusive_alternation_helper(node, False)
 
 
 def catastrophic(pattern):
