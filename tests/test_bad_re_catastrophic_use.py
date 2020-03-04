@@ -270,7 +270,7 @@ def test_bad_re_catastrophic_not_literal_string(re_call):
 
 BACKTRACKABLE = [
     (r"(a+)+z", True),  # present subsequent subexpression
-    (r"([a-c]|[c-e])+z", True),  # alternation present subsequent subexpression
+    (r"(abc|[a-c])+z", True),  # alternation present subsequent subexpression
     (r"(a+)+", False),  # missing subsequent subexpression
     (r"(a+)+x?y?z?", False),  # all subsequent are optional
     (r"(a+)+z{0,5}", False),  # all subsequent are optional
@@ -279,9 +279,9 @@ BACKTRACKABLE = [
     (r"(a+)+b*c?d*?e", True),  # long propagation
     (r"(a+)+$", True),  # at end propagation
     (r"(a+)+\\Z", True),  # at end string propagation
-    (r"(a|([b-c]|[c-e]))+z", True),  # parent subsequent subexpression
-    (r"(a|([b-c]|[c-e])+z)", True),  # sibling subsequent subexpression
-    (r"(a|([b-c]|[c-e]z)+)", False),  # sibling expression parent quantifier
+    (r"(a|(bc|[b-c]))+z", True),  # parent subsequent subexpression
+    (r"(a|(bc|[b-c])+z)", True),  # sibling subsequent subexpression
+    (r"(a|(bc|[b-c]z)+)", False),  # sibling expression parent quantifier
     (r"(?://[^\n]*)*", False),  # found in the wild
     (r"(?:[ \t].*?(?:\n|$))*", False),  # found in the wild
     (r"<.*?>|((?:\\w[-\\w]*|&.*?;)+)", False),  # found in the wild
