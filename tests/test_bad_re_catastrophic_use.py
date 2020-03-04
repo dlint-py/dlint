@@ -268,5 +268,52 @@ def test_bad_re_catastrophic_not_literal_string(re_call):
     assert result == expected
 
 
+BACKTRACKABLE = [
+    (r"(a+)+z", True),  # present subsequent subexpression
+    (r"([a-c]|[c-e])+z", True),  # alternation present subsequent subexpression
+    (r"(a+)+", False),  # missing subsequent subexpression
+    (r"(a+)+x?y?z?", False),  # all subsequent are optional
+    (r"(a+)+z{0,5}", False),  # all subsequent are optional
+    (r"(a+)+z{,5}", False),  # all subsequent are optional
+    (r"(a+)+z*", False),  # all subsequent are optional
+    (r"(a+)+b*c?d*?e", True),  # long propagation
+    (r"(a+)+$", True),  # at end propagation
+    (r"(a+)+\\Z", True),  # at end string propagation
+    (r"(a|([b-c]|[c-e]))+z", True),  # parent subsequent subexpression
+    (r"(a|([b-c]|[c-e])+z)", True),  # sibling subsequent subexpression
+    (r"(a|([b-c]|[c-e]z)+)", False),  # sibling expression parent quantifier
+    (r"(?://[^\n]*)*", False),  # found in the wild
+    (r"(?:[ \t].*?(?:\n|$))*", False),  # found in the wild
+    (r"<.*?>|((?:\\w[-\\w]*|&.*?;)+)", False),  # found in the wild
+    (r"^(\\s+)\\w+=.*(\\n\\1\\w+=.*)+", False),  # found in the wild
+    (r"([^*{}\\s]@|[^*{}@]|\\*(?!/))+", False),  # found in the wild
+]
+
+
+@pytest.mark.parametrize("expression, catastrophic", BACKTRACKABLE)
+def test_bad_re_catastrophic_backtrackable(expression, catastrophic):
+    python_node = dlint.test.base.get_ast_node(
+        """
+        import re
+
+        re.search('{EXPRESSION}')
+        """.format(EXPRESSION=expression)
+    )
+
+    linter = dlint.linters.BadReCatastrophicUseLinter()
+    linter.visit(python_node)
+
+    result = linter.get_results()
+    expected = [] if not catastrophic else [
+        dlint.linters.base.Flake8Result(
+            lineno=4,
+            col_offset=0,
+            message=dlint.linters.BadReCatastrophicUseLinter._error_tmpl
+        )
+    ]
+
+    assert result == expected
+
+
 if __name__ == "__main__":
     unittest.main()

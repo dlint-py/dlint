@@ -35,15 +35,20 @@ CATEGORY_TO_RANGE = {
 
 class OpNode(object):
 
-    def __init__(self, op, args):
+    def __init__(self, op, args, backtrackable=False):
         self.op = op
         self.args = args
-        self.children = []
+        self.backtrackable = backtrackable
+        self.children = collections.deque()
 
     def __str__(self, level=0):
         result = (
             "  " * level
-            + "{}: {}".format(self.op, self.args)
+            + "{}: args={} backtrackable={}".format(
+                self.op,
+                self.args,
+                self.backtrackable
+            )
             + "\n"
         )
 
@@ -53,15 +58,22 @@ class OpNode(object):
         return result
 
     def __repr__(self):
-        return "<{} - op={} args={}>".format(
+        return "<{} - op={} args={} backtrackable={}>".format(
             self.__class__.__name__,
             self.op,
-            self.args
+            self.args,
+            self.backtrackable
         )
 
 
-def build_op_tree(node, subpattern):
-    for op, av in subpattern.data:
+def build_op_tree_helper(node, subpattern, parent_backtrackable):
+    prev_sibling_backtrackable = False
+
+    # Iterating in reverse helps with determining backtrackability. A
+    # subpattern's ability to backtrack depends on subsequent subpatterns, so
+    # it's easier to determine the last subpattern's backtrackability then
+    # propagate that information backwards.
+    for op, av in reversed(subpattern.data):
         args = []
         subpatterns = []
 
@@ -82,11 +94,23 @@ def build_op_tree(node, subpattern):
         else:
             args.append(av)
 
-        new_node = OpNode(op, tuple(args))
-        for sp in subpatterns:
-            build_op_tree(new_node, sp)
+        current_backtrackable = (
+            parent_backtrackable
+            or prev_sibling_backtrackable
+        )
+        new_node = OpNode(op, tuple(args), current_backtrackable)
+        for sp in reversed(subpatterns):
+            build_op_tree_helper(new_node, sp, current_backtrackable)
 
-        node.children.append(new_node)
+        prev_sibling_backtrackable = (
+            prev_sibling_backtrackable
+            or not optional_repeat(new_node)
+        )
+        node.children.appendleft(new_node)
+
+
+def build_op_tree(node, subpattern):
+    build_op_tree_helper(node, subpattern, False)
 
 
 class CharacterRange(object):
@@ -208,6 +232,15 @@ class CharacterRange(object):
         )
 
 
+def optional_repeat(node):
+    if node.op not in sre_parse._REPEATCODES:
+        return False
+
+    repeat_min, repeat_max = node.args
+
+    return repeat_min == 0
+
+
 def large_repeat(node):
     if node.op not in sre_parse._REPEATCODES:
         return False
@@ -235,9 +268,9 @@ def max_nested_quantifiers(node):
         max_nested_quantifiers(child)
         for child in node.children
     )
-    is_large_repeat = int(large_repeat(node))
+    is_catastrophic = int(large_repeat(node) and node.backtrackable)
 
-    return is_large_repeat + child_max
+    return is_catastrophic + child_max
 
 
 def inclusive_alternation_branch(branch_node):
@@ -262,7 +295,7 @@ def mutually_inclusive_alternation_helper(node, nested_quantifier):
         inclusive_alternation = inclusive_alternation_branch(node)
 
     return any(
-        (nested_quantifier and inclusive_alternation)
+        (nested_quantifier and inclusive_alternation and node.backtrackable)
         or mutually_inclusive_alternation_helper(child, nested_quantifier)
         for child in node.children
     )
