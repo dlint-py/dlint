@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.10.3] - 2020-03-09
 ### Fixed
 - False positive for `DUO138` when expressions aren't backtrackable ([#14](https://github.com/dlint-py/dlint/issues/14))
 
