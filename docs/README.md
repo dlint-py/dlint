@@ -97,6 +97,7 @@ comprehensive analysis and ensure you're coding with confidence.
 * [What Developers Want and Need from Program Analysis: An Empirical Study (2016)](https://www.microsoft.com/en-us/research/publication/what-developers-want-and-need-from-program-analysis-an-empirical-study/)
 * [Lessons learned from writing ShellCheck, GitHub's now most starred Haskell project (2020)](https://www.vidarholen.net/contents/blog/?p=859)
 * [A Systematic Impact Study for Fuzzer-Found Compiler Bugs (2019)](https://arxiv.org/abs/1902.09334)
+* [Static Detection of DoS Vulnerabilities in Programs that use Regular Expressions (2017)](https://arxiv.org/abs/1701.04045)
 * [Wikipedia: Data-flow analysis](https://en.wikipedia.org/wiki/Data-flow_analysis)
 
 ## How can I integrate Dlint into XYZ?
