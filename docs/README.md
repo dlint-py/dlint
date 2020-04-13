@@ -98,6 +98,7 @@ comprehensive analysis and ensure you're coding with confidence.
 * [Lessons learned from writing ShellCheck, GitHub's now most starred Haskell project (2020)](https://www.vidarholen.net/contents/blog/?p=859)
 * [A Systematic Impact Study for Fuzzer-Found Compiler Bugs (2019)](https://arxiv.org/abs/1902.09334)
 * [Static Detection of DoS Vulnerabilities in Programs that use Regular Expressions (2017)](https://arxiv.org/abs/1701.04045)
+* [Static Analysis for Security (2004)](https://www.garymcgraw.com/wp-content/uploads/2015/11/bsi5-static.pdf)
 * [Wikipedia: Data-flow analysis](https://en.wikipedia.org/wiki/Data-flow_analysis)
 
 ## How can I integrate Dlint into XYZ?
