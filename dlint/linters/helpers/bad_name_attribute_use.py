@@ -90,10 +90,10 @@ class BadNameAttributeUseLinter(base.BaseLinter, util.ABC):
 
             try:
                 latest_variable_assignment = max(
-                    [
+                    (
                         target for target in targets
                         if target.variable == variable
-                    ],
+                    ),
                     key=lambda target: (target.lineno, target.col_offset)
                 )
             except ValueError:
