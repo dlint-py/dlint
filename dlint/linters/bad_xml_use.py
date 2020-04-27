@@ -32,4 +32,6 @@ class BadXMLUseLinter(bad_module_use.BadModuleUseLinter):
     def whitelisted_modules(self):
         return [
             'xml.sax.saxutils',
+            'xml.etree.ElementTree.Element',
+            'xml.etree.ElementTree.SubElement',
         ]
