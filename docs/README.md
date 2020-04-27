@@ -99,6 +99,8 @@ comprehensive analysis and ensure you're coding with confidence.
 * [A Systematic Impact Study for Fuzzer-Found Compiler Bugs (2019)](https://arxiv.org/abs/1902.09334)
 * [Static Detection of DoS Vulnerabilities in Programs that use Regular Expressions (2017)](https://arxiv.org/abs/1701.04045)
 * [Static Analysis for Security (2004)](https://www.garymcgraw.com/wp-content/uploads/2015/11/bsi5-static.pdf)
+* [CIL: Intermediate Language and Tools for Analysis and Transformation of C Programs (2002)](https://people.eecs.berkeley.edu/~necula/Papers/cil_cc02.pdf)
+* [SAIL: Static Analysis Intermediate Language with a Two-Level Representation (2009)](https://www.cs.utexas.edu/~isil/sail.pdf)
 * [Wikipedia: Data-flow analysis](https://en.wikipedia.org/wiki/Data-flow_analysis)
 
 ## How can I integrate Dlint into XYZ?
