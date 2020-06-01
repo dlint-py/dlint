@@ -49,8 +49,12 @@ class Flake8Extension(object):
             code_prefix_len = 7
             linters = cls.get_linter_classes()
             output_lines = [
-                "{} {} {}".format(l._code, l.__name__, l._error_tmpl[code_prefix_len:])
-                for l in sorted(linters, key=lambda li: li._code)
+                "{} {} {}".format(
+                    linter._code,
+                    linter.__name__,
+                    linter._error_tmpl[code_prefix_len:]
+                )
+                for linter in sorted(linters, key=lambda li: li._code)
             ]
             print("\n".join(output_lines))
             EX_OK = 0
@@ -92,7 +96,10 @@ class Flake8Extension(object):
         return linter_classes
 
     def run(self):
-        linter_instances = [l() for l in self.get_linter_classes()]
+        linter_instances = [
+            linter_class()
+            for linter_class in self.get_linter_classes()
+        ]
         multi_visitor = dlint.multi.MultiNodeVisitor(linter_instances)
         multi_visitor.visit(self.tree)
 
