@@ -173,7 +173,7 @@ control over the linting process:
         "sample": {
             "type": "flake8"
         },
-        "bin": ["python2.7", "python2"],
+        "bin": ["python3.7", "python3"],
         "flags": ["-m", "flake8", "--select", "DUO"]
     }
 }
