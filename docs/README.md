@@ -148,6 +148,42 @@ test:
         - python -m flake8 --select=DUO /path/to/code
 ```
 
+### AppVeyor
+
+Include Dlint in your `.appveyor.yml` configuration file:
+
+```
+build: off
+environment:
+    matrix:
+        - PYTHON: "C:\\Python36"
+        - PYTHON: "C:\\Python37"
+        - PYTHON: "C:\\Python38"
+        - ...
+install:
+    - python -m pip install dlint
+test_script:
+    - python -m flake8 --select=DUO /path/to/code
+```
+
+### GitHub Actions
+
+Include Dlint in your `.github/workflows/main.yml` configuration file:
+
+```
+name: Dlint
+on: [push, pull_request]
+jobs:
+    dlint:
+        runs-on: ubuntu-latest
+        name: Dlint
+        steps:
+            - uses: actions/checkout@master
+            - uses: dlint-py/dlint-action@master
+```
+
+Please see the following: https://github.com/dlint-py/dlint-action.
+
 ### Phabricator
 
 Include Dlint in your [Arcanist](https://secure.phabricator.com/book/phabricator/article/arcanist/)
