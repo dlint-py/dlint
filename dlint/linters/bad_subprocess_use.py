@@ -34,26 +34,26 @@ class BadSubprocessUseLinter(bad_kwarg_use.BadKwargUseLinter):
             {
                 "module_path": "subprocess.call",
                 "kwarg_name": "shell",
-                "predicate": tree.kwarg_present,
+                "predicate": tree.kwarg_true,
             },
             {
                 "module_path": "subprocess.check_call",
                 "kwarg_name": "shell",
-                "predicate": tree.kwarg_present,
+                "predicate": tree.kwarg_true,
             },
             {
                 "module_path": "subprocess.check_output",
                 "kwarg_name": "shell",
-                "predicate": tree.kwarg_present,
+                "predicate": tree.kwarg_true,
             },
             {
                 "module_path": "subprocess.Popen",
                 "kwarg_name": "shell",
-                "predicate": tree.kwarg_present,
+                "predicate": tree.kwarg_true,
             },
             {
                 "module_path": "subprocess.run",
                 "kwarg_name": "shell",
-                "predicate": tree.kwarg_present,
-            }
+                "predicate": tree.kwarg_true,
+            },
         ]
