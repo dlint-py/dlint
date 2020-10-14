@@ -30,7 +30,7 @@ class BadSubprocessUseLinter(bad_kwarg_use.BadKwargUseLinter):
 
     @property
     def kwargs(self):
-        def present_or_not_false(call, kwarg_name):
+        def present_and_not_false(call, kwarg_name):
             return (
                 tree.kwarg_present(call, kwarg_name)
                 and not tree.kwarg_false(call, kwarg_name)
@@ -40,26 +40,26 @@ class BadSubprocessUseLinter(bad_kwarg_use.BadKwargUseLinter):
             {
                 "module_path": "subprocess.call",
                 "kwarg_name": "shell",
-                "predicate": present_or_not_false,
+                "predicate": present_and_not_false,
             },
             {
                 "module_path": "subprocess.check_call",
                 "kwarg_name": "shell",
-                "predicate": present_or_not_false,
+                "predicate": present_and_not_false,
             },
             {
                 "module_path": "subprocess.check_output",
                 "kwarg_name": "shell",
-                "predicate": present_or_not_false,
+                "predicate": present_and_not_false,
             },
             {
                 "module_path": "subprocess.Popen",
                 "kwarg_name": "shell",
-                "predicate": present_or_not_false,
+                "predicate": present_and_not_false,
             },
             {
                 "module_path": "subprocess.run",
                 "kwarg_name": "shell",
-                "predicate": present_or_not_false,
+                "predicate": present_and_not_false,
             },
         ]
