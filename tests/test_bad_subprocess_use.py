@@ -90,45 +90,9 @@ class TestBadSubprocessUse(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [
-            dlint.linters.base.Flake8Result(
-                lineno=6,
-                col_offset=0,
-                message=dlint.linters.BadSubprocessUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=7,
-                col_offset=0,
-                message=dlint.linters.BadSubprocessUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=8,
-                col_offset=0,
-                message=dlint.linters.BadSubprocessUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=9,
-                col_offset=0,
-                message=dlint.linters.BadSubprocessUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=10,
-                col_offset=0,
-                message=dlint.linters.BadSubprocessUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=11,
-                col_offset=0,
-                message=dlint.linters.BadSubprocessUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=12,
-                col_offset=0,
-                message=dlint.linters.BadSubprocessUseLinter._error_tmpl
-            ),
-        ]
+        expected = []
 
-        assert result != expected
+        assert result == expected
 
 
 if __name__ == "__main__":
