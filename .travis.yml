@@ -12,12 +12,12 @@ jobs:
     allow_failures:
         - python: nightly
 install:
-    - pip install --requirement requirements.txt
-    - pip install --requirement requirements-dev.txt
-    - pip install --editable .
+    - python -m pip install --requirement requirements.txt
+    - python -m pip install --requirement requirements-dev.txt
+    - python -m pip install --editable .
 script:
-    - flake8
-    - flake8 --print-dlint-linters
-    - pytest --cov
+    - python -m flake8
+    - python -m flake8 --print-dlint-linters
+    - python -m pytest --cov
 after_success:
     - coveralls
