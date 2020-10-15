@@ -5,8 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Support for Python 3.9 ([#32](https://github.com/dlint-py/dlint/issues/32))
+
 ### Fixed
 - False positive for `DUO107` when `xml.etree.ElementTree.{Element,SubElement}` used ([#28](https://github.com/dlint-py/dlint/issues/28))
+- False positive for `DUO116` when `shell=False` used ([#31](https://github.com/dlint-py/dlint/pull/31))
+
+### Removed
+- Support for Python 3.5
 
 ## [0.10.3] - 2020-03-09
 ### Fixed

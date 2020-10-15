@@ -4,10 +4,10 @@ platform: "x64"
 environment:
     matrix:
         - PYTHON: "C:\\Python27"
-        - PYTHON: "C:\\Python35"
         - PYTHON: "C:\\Python36"
         - PYTHON: "C:\\Python37"
         - PYTHON: "C:\\Python38"
+        - PYTHON: "C:\\Python39"
 install:
     - pip install --requirement requirements.txt
     - pip install --requirement requirements-dev.txt
