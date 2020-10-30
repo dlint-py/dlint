@@ -1,4 +1,5 @@
 build: false
+image: Visual Studio 2019
 version: "0.10.3.{build}"
 platform: "x64"
 environment:
