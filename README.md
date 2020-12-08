@@ -43,7 +43,7 @@ Note the `dlint: 0.11.0`.
 
 # Using
 
-Dlint uses `flake8` to perform its linting functionality which provides many
+Dlint builds on `flake8` to perform its linting. This provides many
 useful features without re-inventing the wheel.
 
 ## CLI
