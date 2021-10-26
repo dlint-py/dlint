@@ -105,16 +105,6 @@ class TestFlake8Extension(base.BaseTest):
 
         assert result == expected
 
-    def test_flake8_extension_get_linter_classes_extend_select(self):
-        options = create_options(extend_select=["DUO101"])
-
-        with extension_with_options(options) as ext:
-            result = ext.get_linter_classes()
-
-        expected = (extension.dlint.linters.YieldReturnStatementLinter,)
-
-        assert result == expected
-
     def test_flake8_extension_get_linter_classes_extended_default_select(self):
         options = create_options(extended_default_select=["DUO101"])
 
