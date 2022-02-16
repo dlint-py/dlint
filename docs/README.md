@@ -102,6 +102,10 @@ comprehensive analysis and ensure you're coding with confidence.
 * [CIL: Intermediate Language and Tools for Analysis and Transformation of C Programs (2002)](https://people.eecs.berkeley.edu/~necula/Papers/cil_cc02.pdf)
 * [SAIL: Static Analysis Intermediate Language with a Two-Level Representation (2009)](https://www.cs.utexas.edu/~isil/sail.pdf)
 * [Wikipedia: Data-flow analysis](https://en.wikipedia.org/wiki/Data-flow_analysis)
+* Applied Research
+  * [Zero Day Initiative - MindShaRE: When MySQL Cluster Encounters Taint Analysis](https://www.zerodayinitiative.com/blog/2022/2/10/mindshare-when-mysql-cluster-encounters-taint-analysis)
+  * [Trail of Bits - Finding unhandled errors using CodeQL](https://blog.trailofbits.com/2022/01/11/finding-unhandled-errors-using-codeql/)
+  * [Trail of Bits - Discovering goroutine leaks with Semgrep](https://www.trailofbits.com/post/discovering-goroutine-leaks-with-semgrep)
 
 ## How can I integrate Dlint into XYZ?
 
