@@ -92,6 +92,7 @@ comprehensive analysis and ensure you're coding with confidence.
 * [Lessons from Building Static Analysis Tools at Google (2018)](https://cacm.acm.org/magazines/2018/4/226371-lessons-from-building-static-analysis-tools-at-google/fulltext)
 * [Scaling Static Analyses at Facebook (2019)](https://cacm.acm.org/magazines/2019/8/238344-scaling-static-analyses-at-facebook/fulltext)
 * [Static Analysis at Scale: An Instagram Story (2019)](https://instagram-engineering.com/static-analysis-at-scale-an-instagram-story-8f498ab71a0c)
+* [Static Analysis at GitHub (2022)](https://cacm.acm.org/magazines/2022/2/258227-static-analysis-at-github/fulltext)
 * [A Few Billion Lines of Code Later: Using Static Analysis to Find Bugs in the Real World (2010)](https://cacm.acm.org/magazines/2010/2/69354-a-few-billion-lines-of-code-later/fulltext)
 * [How to Build Static Checking Systems Using Orders of Magnitude Less Code (2016)](https://web.stanford.edu/~mlfbrown/paper.pdf)
 * [What Developers Want and Need from Program Analysis: An Empirical Study (2016)](https://www.microsoft.com/en-us/research/publication/what-developers-want-and-need-from-program-analysis-an-empirical-study/)
