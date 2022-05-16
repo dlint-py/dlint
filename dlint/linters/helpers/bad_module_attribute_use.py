@@ -15,7 +15,7 @@ from ... import util
 
 
 class BadModuleAttributeUseLinter(base.BaseLinter, util.ABC):
-    """This abstract base class provides an simple interface for creating new
+    """This abstract base class provides a simple interface for creating new
     lint rules that block bad attributes within a module.
     """
 
