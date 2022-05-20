@@ -7,7 +7,7 @@ from ... import util
 
 
 class BadBuiltinUseLinter(base.BaseLinter, util.ABC):
-    """This abstract base class provides an simple interface for creating new
+    """This abstract base class provides a simple interface for creating new
     lint rules that block builtin functions.
     """
     @property
