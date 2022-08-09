@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.13.0] - 2022-08-09
+### Added
+- Support for Flake8 5 ([#45](https://github.com/dlint-py/dlint/issues/45))
+
 ### Changed
 - Support `usedforsecurity=False` parameter to hashlib constructors ([#39](https://github.com/dlint-py/dlint/issues/39))
 
