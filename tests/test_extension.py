@@ -27,11 +27,11 @@ import extension  # noqa: E402
 
 
 def create_options(**kwargs):
-    kwargs.setdefault("select", [])
-    kwargs.setdefault("extend_select", [])
+    kwargs.setdefault("select", None)
+    kwargs.setdefault("ignore", None)
+    kwargs.setdefault("extend_select", None)
+    kwargs.setdefault("extend_ignore", None)
     kwargs.setdefault("extended_default_select", ["DUO"])
-    kwargs.setdefault("ignore", [])
-    kwargs.setdefault("extend_ignore", [])
     kwargs.setdefault("extended_default_ignore", [])
     kwargs.setdefault("disable_noqa", False)
     kwargs.setdefault("enable_extensions", [])
