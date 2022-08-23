@@ -16,15 +16,15 @@ knowledge. **Further, please check out our brief section on [developing](https:/
 
 When adding new linters:
 
-* New linters should be added to the `dlint/linters/` directory.
-* Add a new file and class inheriting from `base.BaseLinter` for each new linter.
-* Add a "pass-through" import of the new class to `dlint.linters.__init__.py`.
-* Add the new class to `ALL` in `dlint.linters.__init__.py`.
-* Add documentation link in `docs/README.md`.
-* Add documentation file in `docs/linters/`.
-* Ensure new rules are properly tested (high or complete test coverage).
-* Ensure new code adheres to the style guide/linting process.
-* Add new rule information to `CHANGELOG.md` under `Unreleased` section, `Added` sub-section.
+- New linters should be added to the `dlint/linters/` directory.
+- Add a new file and class inheriting from `base.BaseLinter` for each new linter.
+- Add a "pass-through" import of the new class to `dlint.linters.__init__.py`.
+- Add the new class to `ALL` in `dlint.linters.__init__.py`.
+- Add documentation link in `docs/README.md`.
+- Add documentation file in `docs/linters/`.
+- Ensure new rules are properly tested (high or complete test coverage).
+- Ensure new code adheres to the style guide/linting process.
+- Add new rule information to `CHANGELOG.md` under `Unreleased` section, `Added` sub-section.
 
 From here, please create a [pull request](https://github.com/dlint-py/dlint/pulls)
 with your changes and wait for a review.
@@ -36,7 +36,7 @@ first. This issue should include a snippet of code for reproducing the bug.
 
 E.g.
 
-*I expected `dlint` to flag the following code for faulty use of the `foo` module:*
+_I expected `dlint` to flag the following code for faulty use of the `foo` module:_
 
 ```
 from bar import foo
@@ -46,7 +46,7 @@ widget = foo.baz(var)
 send_result(widget)
 ```
 
-*Please update `dlint` to catch this. Thanks!*
+_Please update `dlint` to catch this. Thanks!_
 
 After reporting the issue, if you'd like to help fix it, please create a
 [pull request](https://github.com/dlint-py/dlint/pulls) with the
