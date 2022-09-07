@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from .helpers import bad_builtin_use
-from . import base
 
 
 class BadExecUseLinter(bad_builtin_use.BadBuiltinUseLinter):
@@ -13,16 +12,6 @@ class BadExecUseLinter(bad_builtin_use.BadBuiltinUseLinter):
 
     _code = 'DUO105'
     _error_tmpl = 'DUO105 use of "exec" is insecure'
-
-    # Python 2
-    def visit_Exec(self, node):
-        self.results.append(
-            base.Flake8Result(
-                lineno=node.lineno,
-                col_offset=node.col_offset,
-                message=self._error_tmpl
-            )
-        )
 
     @property
     def illegal_builtin(self):

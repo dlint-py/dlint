@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-import ast
-import sys
-
 from . import base
 
 
@@ -20,21 +17,6 @@ class BadInputUseLinter(base.BaseLinter):
         self.unsafe_input_import = True
 
         super(BadInputUseLinter, self).__init__(*args, **kwargs)
-
-    def visit_Call(self, node):
-        is_python_2 = sys.version_info < (3, 0)
-
-        if (is_python_2
-                and self.unsafe_input_import
-                and isinstance(node.func, ast.Name)
-                and node.func.id == 'input'):
-            self.results.append(
-                base.Flake8Result(
-                    lineno=node.lineno,
-                    col_offset=node.col_offset,
-                    message=self._error_tmpl
-                )
-            )
 
     def visit_ImportFrom(self, node):
         # Using input from six.moves is valid, so if input is imported
