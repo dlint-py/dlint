@@ -62,8 +62,7 @@ class BadReCatastrophicUseLinter(bad_module_attribute_use.BadModuleAttributeUseL
 
             pattern = call.args[pattern_argument_number]
 
-            # Only handle string literals for now
-            if not isinstance(pattern, ast.Str):
+            if not isinstance(pattern, ast.Constant):
                 return False
 
             return redos.detect.catastrophic(pattern.s)

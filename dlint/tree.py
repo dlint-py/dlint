@@ -34,7 +34,7 @@ def function_is_empty(function):
         return (
             isinstance(node, ast.Raise)
             or isinstance(node, ast.Pass)
-            or (isinstance(node, ast.Expr) and isinstance(node.value, ast.Str))
+            or (isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant))
         )
 
     return all(
@@ -99,24 +99,11 @@ def kwarg_not_present(call, kwarg_name):
 
 
 def kwarg_primitive(call, kwarg_name, primitive):
-    try:
-        # Python 3
-        primitive_type = ast.NameConstant
-
-        def comparator(keyword, inner_primitive):
-            return (
-                isinstance(keyword.value, primitive_type)
-                and keyword.value.value == inner_primitive
-            )
-    except AttributeError:
-        # Python 2, AttributeError on ast.NameConstant
-        primitive_type = ast.Name
-
-        def comparator(keyword, inner_primitive):
-            return (
-                isinstance(keyword.value, primitive_type)
-                and keyword.value.id == str(inner_primitive)
-            )
+    def comparator(keyword, inner_primitive):
+        return (
+            isinstance(keyword.value, ast.Constant)
+            and keyword.value.value == inner_primitive
+        )
 
     return any(
         keyword.arg == kwarg_name
@@ -140,7 +127,7 @@ def kwarg_none(call, kwarg_name):
 def kwarg_str(call, kwarg_name, s):
     return any(
         keyword.arg == kwarg_name
-        and isinstance(keyword.value, ast.Str)
+        and isinstance(keyword.value, ast.Constant)
         and keyword.value.s == s
         for keyword in call.keywords
     )
