@@ -6,9 +6,9 @@ import dlint
 
 
 class TestUtil(unittest.TestCase):
+    pass
 
-    def test_abc(self):
-        assert dlint.util.ABC
+
 
 
 if __name__ == "__main__":

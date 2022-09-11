@@ -6,10 +6,9 @@ import itertools
 
 from .. import base
 from ... import tree
-from ... import util
 
 
-class BadKwargUseLinter(base.BaseLinter, util.ABC):
+class BadKwargUseLinter(base.BaseLinter, abc.ABC):
     """This abstract base class provides a simple interface for creating new
     lint rules that block bad kwarg use.
     """

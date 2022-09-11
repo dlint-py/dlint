@@ -4,10 +4,9 @@ import abc
 
 from .. import base
 from ... import tree
-from ... import util
 
 
-class BadModuleAttributeUseLinter(base.BaseLinter, util.ABC):
+class BadModuleAttributeUseLinter(base.BaseLinter, abc.ABC):
     """This abstract base class provides a simple interface for creating new
     lint rules that block bad attributes within a module.
     """

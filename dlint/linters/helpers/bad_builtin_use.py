@@ -3,10 +3,9 @@
 import abc
 
 from .. import base
-from ... import util
 
 
-class BadBuiltinUseLinter(base.BaseLinter, util.ABC):
+class BadBuiltinUseLinter(base.BaseLinter, abc.ABC):
     """This abstract base class provides a simple interface for creating new
     lint rules that block builtin functions.
     """
