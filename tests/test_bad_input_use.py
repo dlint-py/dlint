@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 
-import sys
 import unittest
 
 import dlint
-
-IS_PYTHON_2 = sys.version_info < (3, 0)
 
 
 class TestBadInputUse(dlint.test.base.BaseTest):
@@ -37,13 +34,7 @@ class TestBadInputUse(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if not IS_PYTHON_2 else [
-            dlint.linters.base.Flake8Result(
-                lineno=4,
-                col_offset=9,
-                message=dlint.linters.BadInputUseLinter._error_tmpl
-            )
-        ]
+        expected = []
 
         assert result == expected
 

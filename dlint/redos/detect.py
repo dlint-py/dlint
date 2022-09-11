@@ -7,13 +7,6 @@ import collections
 import itertools
 import sys
 
-try:
-    # Python 2
-    from future_builtins import filter  # Same as itertools.ifilter
-except ImportError:
-    # Python 3
-    pass
-
 CR = collections.namedtuple('CR', ['cr_min', 'cr_max'])
 
 CATEGORY_TO_RANGE = {
