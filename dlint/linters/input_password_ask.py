@@ -30,4 +30,4 @@ class InputPasswordUseLinter(base.BaseLinter):
         if node.args:
             return node.args[0].value
         if node.keywords:
-            return node.args[0].value
+            return node.keywords[0].value.value
