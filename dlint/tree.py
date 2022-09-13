@@ -67,12 +67,12 @@ def non_empty_return(_return):
 
 
 def walk_callback_same_scope(node, callback):
-    is_python_3_5 = sys.version_info >= (3, 5)
+    is_python_3_6 = sys.version_info >= (3, 6)
 
     # If we change scope, e.g. enter into a new
     # class or function definition, then halt iteration
     scopes = (ast.ClassDef, ast.FunctionDef)
-    if is_python_3_5:
+    if is_python_3_6:
         scopes += (ast.AsyncFunctionDef,)
 
     def scope_predicate(inner_node):
@@ -99,25 +99,11 @@ def kwarg_not_present(call, kwarg_name):
 
 
 def kwarg_primitive(call, kwarg_name, primitive):
-    try:
-        # Python 3
-        primitive_type = ast.NameConstant
-
-        def comparator(keyword, inner_primitive):
-            return (
-                isinstance(keyword.value, primitive_type)
-                and keyword.value.value == inner_primitive
-            )
-    except AttributeError:
-        # Python 2, AttributeError on ast.NameConstant
-        primitive_type = ast.Name
-
-        def comparator(keyword, inner_primitive):
-            return (
-                isinstance(keyword.value, primitive_type)
-                and keyword.value.id == str(inner_primitive)
-            )
-
+    def comparator(keyword, inner_primitive):
+        return (
+            isinstance(keyword.value, ast.NameConstant)
+            and keyword.value.value == inner_primitive
+        )
     return any(
         keyword.arg == kwarg_name
         and comparator(keyword, primitive)

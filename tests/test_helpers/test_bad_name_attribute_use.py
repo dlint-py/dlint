@@ -5,7 +5,7 @@ import unittest
 
 import dlint
 
-IS_PYTHON_3_5 = sys.version_info >= (3, 5)
+IS_PYTHON_3_6 = sys.version_info >= (3, 6)
 
 
 def get_bad_name_attribute_use_implementation(illegal_name_attributes):
@@ -125,7 +125,7 @@ class TestBadNameAttributeUse(dlint.test.base.BaseTest):
 
         assert result == expected
 
-    @unittest.skipUnless(IS_PYTHON_3_5, 'async statements introduced in Python 3.5')
+    @unittest.skipUnless(IS_PYTHON_3_6, 'async statements introduced in Python 3.6')
     def test_bad_name_attributes_async_nested(self):
         python_node = self.get_ast_node(
             """
@@ -188,7 +188,7 @@ class TestBadNameAttributeUse(dlint.test.base.BaseTest):
 
         assert result == expected
 
-    @unittest.skipUnless(IS_PYTHON_3_5, 'async statements introduced in Python 3.5')
+    @unittest.skipUnless(IS_PYTHON_3_6, 'async statements introduced in Python 3.6')
     def test_bad_name_attributes_async_nested_overwrite(self):
         python_node = self.get_ast_node(
             """

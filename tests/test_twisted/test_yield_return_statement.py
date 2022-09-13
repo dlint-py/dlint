@@ -5,7 +5,7 @@ import unittest
 
 import dlint
 
-IS_PYTHON_3_3 = sys.version_info >= (3, 3)
+IS_PYTHON_3_6 = sys.version_info >= (3, 6)
 
 
 class TestYieldReturnStatement(dlint.test.base.BaseTest):
@@ -94,7 +94,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_3 else [
+        expected = [] if IS_PYTHON_3_6 else [
             dlint.linters.base.Flake8Result(
                 lineno=6,
                 col_offset=4,
@@ -138,7 +138,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_3 else [
+        expected = [] if IS_PYTHON_3_6 else [
             dlint.linters.base.Flake8Result(
                 lineno=6,
                 col_offset=4,
@@ -169,7 +169,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_3 else [
+        expected = [] if IS_PYTHON_3_6 else [
             dlint.linters.base.Flake8Result(
                 lineno=12,
                 col_offset=8,
@@ -225,7 +225,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_3 else [
+        expected = [] if IS_PYTHON_3_6 else [
             dlint.linters.base.Flake8Result(
                 lineno=10,
                 col_offset=8,
@@ -276,7 +276,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_3 else [
+        expected = [] if IS_PYTHON_3_6 else [
             dlint.linters.base.Flake8Result(
                 lineno=6,
                 col_offset=4,
@@ -301,7 +301,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_3 else [
+        expected = [] if IS_PYTHON_3_6 else [
             dlint.linters.base.Flake8Result(
                 lineno=6,
                 col_offset=4,

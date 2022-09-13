@@ -3,17 +3,7 @@
 import ast
 import copy
 
-try:
-    from functools import lru_cache
-except ImportError:
-    # Sorry Python 2 users, it's time to upgrade
-    def lru_cache(*args, **kwargs):
-        def decorator(function):
-            def noop(*inner_args, **inner_kwargs):
-                return function(*inner_args, **inner_kwargs)
-            return noop
-        return decorator
-
+from functools import lru_cache
 from . import util
 
 

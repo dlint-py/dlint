@@ -6,7 +6,6 @@ import collections
 
 from .. import base
 from ... import tree
-from ... import util
 
 Assignment = collections.namedtuple(
     'Assignment',
@@ -14,7 +13,7 @@ Assignment = collections.namedtuple(
 )
 
 
-class BadNameAttributeUseLinter(base.BaseLinter, util.ABC):
+class BadNameAttributeUseLinter(base.BaseLinter, abc.ABC):
     """This abstract base class provides a simple interface for creating new
     lint rules that block bad attributes on a variable object.
     """

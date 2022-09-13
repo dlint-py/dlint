@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 
-import ast
-import sys
-
 from . import base
 
 
 class BadInputUseLinter(base.BaseLinter):
-    """This linter looks for use of the Python "input" function. In Python 2
-    this function is tantamount to eval(raw_input()), and thus should not be
-    used. In Python 3 raw_input() functionality has been moved to input().
+    """This linter looks for use of the Python "input" function.
+    In Python 3 raw_input() functionality has been moved to input().
     """
     off_by_default = False
 
@@ -20,21 +16,6 @@ class BadInputUseLinter(base.BaseLinter):
         self.unsafe_input_import = True
 
         super(BadInputUseLinter, self).__init__(*args, **kwargs)
-
-    def visit_Call(self, node):
-        is_python_2 = sys.version_info < (3, 0)
-
-        if (is_python_2
-                and self.unsafe_input_import
-                and isinstance(node.func, ast.Name)
-                and node.func.id == 'input'):
-            self.results.append(
-                base.Flake8Result(
-                    lineno=node.lineno,
-                    col_offset=node.col_offset,
-                    message=self._error_tmpl
-                )
-            )
 
     def visit_ImportFrom(self, node):
         # Using input from six.moves is valid, so if input is imported
