@@ -188,7 +188,7 @@ class TestBadNameAttributeUse(dlint.test.base.BaseTest):
 
         assert result == expected
 
-    @unittest.skipUnless(IS_PYTHON_3_6, 'async statements introduced in Python 3.5')
+    @unittest.skipUnless(IS_PYTHON_3_6, 'async statements introduced in Python 3.6')
     def test_bad_name_attributes_async_nested_overwrite(self):
         python_node = self.get_ast_node(
             """
