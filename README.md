@@ -23,13 +23,13 @@ For documentation and a list of rules see [docs](https://github.com/dlint-py/dli
 
 # Installing
 
-```
+```bash
 $ python -m pip install dlint
 ```
 
 And double check that it was installed correctly:
 
-```
+```bash
 $ python -m flake8 -h
 Usage: flake8 [options] file file ...
 
@@ -49,20 +49,20 @@ useful features without re-inventing the wheel.
 
 Let's run a simple check:
 
-```
+```bash
 $ cat << EOF > test.py
 print("TEST1")
 exec('print("TEST2")')
 EOF
 ```
 
-```
+```bash
 $ python test.py
 TEST1
 TEST2
 ```
 
-```
+```bash
 $ python -m flake8 --select=DUO test.py
 test.py:2:1: DUO105 use of "exec" is insecure
 ```
@@ -74,13 +74,13 @@ The `--select=DUO` flag tells `flake8` to only run Dlint lint rules.
 
 From here, we can easily run Dlint against a directory of Python code:
 
-```
+```bash
 $ python -m flake8 --select=DUO /path/to/code
 ```
 
 To fine-tune your linting, check out the `flake8` help:
 
-```
+```bash
 $ python -m flake8 --help
 ```
 
@@ -121,7 +121,7 @@ See an [example plugin](https://github.com/dlint-py/dlint-plugin-example) for fu
 
 First, install development packages:
 
-```
+```bash
 $ python -m pip install -r requirements.txt
 $ python -m pip install -r requirements-dev.txt
 $ python -m pip install -e .
@@ -129,36 +129,36 @@ $ python -m pip install -e .
 
 ## Testing
 
-```
+```bash
 $ pytest
 ```
 
 ## Linting
 
-```
+```bash
 $ flake8
 ```
 
 ## Coverage
 
-```
+```bash
 $ pytest --cov
 ```
 
 ## Benchmarking
 
-```
+```bash
 $ pytest -k test_benchmark_run --benchmark-py-file /path/to/file.py tests/test_benchmark/
 ```
 
 Or get benchmark results for linters individually:
 
-```
+```bash
 $ pytest -k test_benchmark_individual --benchmark-py-file /path/to/file.py tests/test_benchmark/
 ```
 
 Or run against a single linter:
 
-```
+```bash
 $ pytest -k test_benchmark_individual[DUO138-BadReCatastrophicUseLinter] --benchmark-py-file /path/to/file.py tests/test_benchmark/
 ```
