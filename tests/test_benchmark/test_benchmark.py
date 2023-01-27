@@ -37,8 +37,8 @@ def test_benchmark_run(benchmark_py_file, benchmark):
 
 @pytest.mark.parametrize(
     'linter',
-    sorted(extension.dlint.linters.ALL, key=lambda l: l._code),
-    ids=lambda l: "{}-{}".format(l._code, l.__name__)
+    sorted(extension.dlint.linters.ALL, key=lambda lint: lint._code),
+    ids=lambda lint: "{}-{}".format(lint._code, lint.__name__)
 )
 def test_benchmark_individual(benchmark_py_file, benchmark_group_base_class, benchmark, linter):
     if benchmark_group_base_class:
