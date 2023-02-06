@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2023-02-06
+
 ### Added
 
 - Support for Flake8 6 ([#56](https://github.com/dlint-py/dlint/issues/56))
