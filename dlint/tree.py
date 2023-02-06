@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import ast
-import sys
 
 
 def decorator_name(decorator):
@@ -67,13 +66,9 @@ def non_empty_return(_return):
 
 
 def walk_callback_same_scope(node, callback):
-    is_python_3_6 = sys.version_info >= (3, 6)
-
     # If we change scope, e.g. enter into a new
     # class or function definition, then halt iteration
-    scopes = (ast.ClassDef, ast.FunctionDef)
-    if is_python_3_6:
-        scopes += (ast.AsyncFunctionDef,)
+    scopes = (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
 
     def scope_predicate(inner_node):
         return not isinstance(inner_node, scopes)

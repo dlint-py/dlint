@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 
-import sys
 import unittest
 
 import dlint
-
-IS_PYTHON_3_6 = sys.version_info >= (3, 6)
 
 
 class TestYieldReturnStatement(dlint.test.base.BaseTest):
@@ -94,13 +91,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_6 else [
-            dlint.linters.base.Flake8Result(
-                lineno=6,
-                col_offset=4,
-                message=dlint.linters.YieldReturnStatementLinter._error_tmpl
-            )
-        ]
+        expected = []
 
         assert result == expected
 
@@ -138,13 +129,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_6 else [
-            dlint.linters.base.Flake8Result(
-                lineno=6,
-                col_offset=4,
-                message=dlint.linters.YieldReturnStatementLinter._error_tmpl
-            )
-        ]
+        expected = []
 
         assert result == expected
 
@@ -169,13 +154,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_6 else [
-            dlint.linters.base.Flake8Result(
-                lineno=12,
-                col_offset=8,
-                message=dlint.linters.YieldReturnStatementLinter._error_tmpl
-            )
-        ]
+        expected = []
 
         assert result == expected
 
@@ -225,13 +204,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_6 else [
-            dlint.linters.base.Flake8Result(
-                lineno=10,
-                col_offset=8,
-                message=dlint.linters.YieldReturnStatementLinter._error_tmpl
-            )
-        ]
+        expected = []
 
         assert result == expected
 
@@ -276,13 +249,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_6 else [
-            dlint.linters.base.Flake8Result(
-                lineno=6,
-                col_offset=4,
-                message=dlint.linters.YieldReturnStatementLinter._error_tmpl
-            )
-        ]
+        expected = []
 
         assert result == expected
 
@@ -301,13 +268,7 @@ class TestYieldReturnStatement(dlint.test.base.BaseTest):
         linter.visit(python_node)
 
         result = linter.get_results()
-        expected = [] if IS_PYTHON_3_6 else [
-            dlint.linters.base.Flake8Result(
-                lineno=6,
-                col_offset=4,
-                message=dlint.linters.YieldReturnStatementLinter._error_tmpl
-            )
-        ]
+        expected = []
 
         assert result == expected
 
