@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import functools
 import importlib
 import inspect
 import pkgutil
@@ -56,6 +57,7 @@ class Flake8Extension(object):
         cls.options = options
 
     @classmethod
+    @functools.lru_cache()
     def get_plugin_linter_classes(cls):
         module_prefix = 'dlint_plugin_'
         class_prefix = 'Dlint'
