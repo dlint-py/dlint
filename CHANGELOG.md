@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1] - 2023-04-10
+
+### Changed
+
+- Performance improvements to `get_plugin_linter_classes` ([#58](https://github.com/dlint-py/dlint/issues/58))
+
 ## [0.14.0] - 2023-02-06
 
 ### Added
