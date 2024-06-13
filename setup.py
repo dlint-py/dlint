@@ -1,9 +1,6 @@
-from setuptools import (
-    find_packages,
-    setup,
-)
-
 import os
+
+from setuptools import setup
 
 import dlint
 
@@ -32,7 +29,6 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url=dlint.__url__,
-    packages=find_packages(),
     license=dlint.__license__,
     classifiers=[
         'Environment :: Console',
