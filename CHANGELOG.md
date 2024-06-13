@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2024-06-13
+
+### Added
+
+- Support for Python 3.12
+
+### Removed
+
+- `tests` from packages ([#60](https://github.com/dlint-py/dlint/issues/60))
+- Support for Python 3.7
+
 ## [0.14.1] - 2023-04-10
 
 ### Changed
