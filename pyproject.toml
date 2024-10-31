@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "dlint"
+version = "0.15.0"
+description = "Dlint is a tool for encouraging best coding practices and helping ensure Python code is secure."
+authors = []
+license = "BSD-3-Clause"
+readme = "README.md"
+repository = "https://github.com/dlint-py/dlint"
+homepage = "https://github.com/dlint-py/dlint"
+packages = [{include = "dlint"}]
+classifiers = [
+    'Environment :: Console',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: MacOS :: MacOS X',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: POSIX',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Topic :: Security',
+    'Topic :: Software Development :: Quality Assurance',
+]
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+flake8 = ">=3.6.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+pytest-cov = "^5.0.0"
+pytest-benchmark = "^4.0.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.plugins."flake8.extension"]
+DUO = "dlint.extension:Flake8Extension"
+
+[tool.coverage.run]
+source = ["dlint"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
