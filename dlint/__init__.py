@@ -1,3 +1,5 @@
+from importlib.metadata import metadata
+
 from . import linters  # noqa F401
 from . import multi  # noqa F401
 from . import namespace  # noqa F401
@@ -6,11 +8,10 @@ from . import test  # noqa F401
 from . import tree  # noqa F401
 from . import util  # noqa F401
 
-__name__ = 'dlint'
-__version__ = '0.15.0'
-__description__ = (
-    "Dlint is a tool for encouraging best coding practices "
-    "and helping ensure Python code is secure."
-)
-__url__ = 'https://github.com/dlint-py/dlint'
-__license__ = 'BSD-3-Clause'
+m = metadata('dlint')
+
+__name__ = m['Name']
+__version__ = m['Version']
+__description__ = m['Summary']
+__url__ = m['Home-page']
+__license__ = m['License']
