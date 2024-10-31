@@ -33,7 +33,11 @@ def function_is_empty(function):
         return (
             isinstance(node, ast.Raise)
             or isinstance(node, ast.Pass)
-            or (isinstance(node, ast.Expr) and isinstance(node.value, ast.Str))
+            or (
+                isinstance(node, ast.Expr)
+                and isinstance(node.value, ast.Constant)
+                and isinstance(node.value.value, str)
+            )
         )
 
     return all(
@@ -96,7 +100,7 @@ def kwarg_not_present(call, kwarg_name):
 def kwarg_primitive(call, kwarg_name, primitive):
     def comparator(keyword, inner_primitive):
         return (
-            isinstance(keyword.value, ast.NameConstant)
+            isinstance(keyword.value, ast.Constant)
             and keyword.value.value == inner_primitive
         )
     return any(
@@ -121,8 +125,9 @@ def kwarg_none(call, kwarg_name):
 def kwarg_str(call, kwarg_name, s):
     return any(
         keyword.arg == kwarg_name
-        and isinstance(keyword.value, ast.Str)
-        and keyword.value.s == s
+        and isinstance(keyword.value, ast.Constant)
+        and isinstance(keyword.value.value, str)
+        and keyword.value.value == s
         for keyword in call.keywords
     )
 
