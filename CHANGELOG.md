@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Use `re` submodules instead of `sre_parse` and `sre_constants` ([#61](https://github.com/dlint-py/dlint/issues/61))
+
 ## [0.16.0] - 2024-10-31
 
 ### Added

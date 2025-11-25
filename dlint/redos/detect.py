@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
-import sre_constants
-import sre_parse
-
 import collections
 import itertools
 import sys
+
+if sys.version_info >= (3, 11):
+    import re._constants as sre_constants
+    import re._parser as sre_parse
+else:
+    import sre_constants
+    import sre_parse
 
 CR = collections.namedtuple('CR', ['cr_min', 'cr_max'])
 
