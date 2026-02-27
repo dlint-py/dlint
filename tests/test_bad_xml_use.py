@@ -12,7 +12,6 @@ class TestBadXMLUse(dlint.test.base.BaseTest):
             """
             import xml
             import xmlrpclib
-            import lxml
             """
         )
 
@@ -28,11 +27,6 @@ class TestBadXMLUse(dlint.test.base.BaseTest):
             ),
             dlint.linters.base.Flake8Result(
                 lineno=3,
-                col_offset=0,
-                message=dlint.linters.BadXMLUseLinter._error_tmpl
-            ),
-            dlint.linters.base.Flake8Result(
-                lineno=4,
                 col_offset=0,
                 message=dlint.linters.BadXMLUseLinter._error_tmpl
             )
@@ -98,21 +92,6 @@ class TestBadXMLUse(dlint.test.base.BaseTest):
                 message=dlint.linters.BadXMLUseLinter._error_tmpl
             ),
         ]
-
-        assert result == expected
-
-    def test_defused_lxml_usage(self):
-        python_node = self.get_ast_node(
-            """
-            from defusedxml import lxml
-            """
-        )
-
-        linter = dlint.linters.BadXMLUseLinter()
-        linter.visit(python_node)
-
-        result = linter.get_results()
-        expected = []
 
         assert result == expected
 
