@@ -10,6 +10,10 @@ import dlint
     """input('enter your name:')""",
     """input = 1""",
     """password = 'something'""",
+    # defensive: these must not raise even though they're unusual
+    """input()""",
+    """input(some_password_variable)""",
+    """foo.input('enter your password:')""",
 ])
 def test_input_password_not_used(code):
     python_node = dlint.test.base.get_ast_node(code)

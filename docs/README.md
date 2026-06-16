@@ -42,7 +42,7 @@ Dlint uses a simple, folder-based hierarchy written in [Markdown](https://en.wik
 - [`DUO136` `BadXmlsecModuleAttributeUseLinter` insecure "xmlsec" attribute use](https://github.com/dlint-py/dlint/blob/master/docs/linters/DUO136.md)
 - [`DUO137` `BadItsDangerousKwargUseLinter` insecure "itsdangerous" use allowing empty signing](https://github.com/dlint-py/dlint/blob/master/docs/linters/DUO137.md)
 - [`DUO138` `BadReCatastrophicUseLinter` catastrophic "re" usage - denial-of-service possible](https://github.com/dlint-py/dlint/blob/master/docs/linters/DUO138.md)
-- todo
+- [`DUO139` `InputPasswordUseLinter` insecure "input" use to ask for a password](https://github.com/dlint-py/dlint/blob/master/docs/linters/DUO139.md)
 
 # FAQs
 
