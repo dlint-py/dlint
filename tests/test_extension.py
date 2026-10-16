@@ -2,6 +2,7 @@
 
 import argparse
 import contextlib
+from email.message import Message
 import os
 import sys
 import unittest
@@ -53,6 +54,23 @@ def extension_with_options(options):
 
 
 class TestFlake8Extension(base.BaseTest):
+
+    def test_homepage_from_project_url(self):
+        package_metadata = Message()
+        package_metadata['Project-URL'] = 'Homepage, https://example.invalid/project'
+
+        assert extension.dlint._homepage(package_metadata) == (
+            'https://example.invalid/project'
+        )
+
+    def test_homepage_prefers_legacy_field(self):
+        package_metadata = Message()
+        package_metadata['Home-page'] = 'https://example.invalid/legacy'
+        package_metadata['Project-URL'] = 'Homepage, https://example.invalid/project'
+
+        assert extension.dlint._homepage(package_metadata) == (
+            'https://example.invalid/legacy'
+        )
 
     def test_flake8_extension_empty(self):
         python_node = self.get_ast_node(
