@@ -13,5 +13,4 @@ m = metadata('dlint')
 __name__ = m['Name']
 __version__ = m['Version']
 __description__ = m['Summary']
-__url__ = m['Home-page']
-__license__ = m['License']
+__license__ = m.get('License', m.get('License-Expression'))
