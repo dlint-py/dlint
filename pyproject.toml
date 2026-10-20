@@ -18,7 +18,6 @@ repository = "https://github.com/dlint-py/dlint"
 packages = [{include = "dlint"}]
 classifiers = [
     'Environment :: Console',
-    'License :: OSI Approved :: BSD License',
     'Operating System :: MacOS :: MacOS X',
     'Operating System :: Microsoft :: Windows',
     'Operating System :: POSIX',
