@@ -13,5 +13,5 @@ m = metadata('dlint')
 __name__ = m['Name']
 __version__ = m['Version']
 __description__ = m['Summary']
-__url__ = m['Home-page']
-__license__ = m['License']
+__url__ = m['Project-URL'].replace('Homepage, ', '')
+__license__ = m['License-Expression']
