@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-10-20
+
 ### Changed
 
 - Use `re` submodules instead of `sre_parse` and `sre_constants` ([#61](https://github.com/dlint-py/dlint/issues/61))
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support for Python 3.9
 - Support for Python 3.10
+- `dlint.__url__` - this is ambiguous from the package data
 
 ## [0.16.0] - 2024-10-31
 
