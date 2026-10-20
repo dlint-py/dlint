@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "dlint"
-version = "0.16.0"
+version = "0.17.0"
 description = "Dlint is a tool for encouraging best coding practices and helping ensure Python code is secure."
 license = "BSD-3-Clause"
 readme = "README.md"
